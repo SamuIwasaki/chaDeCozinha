@@ -318,7 +318,7 @@ function reservar(i) {
   const nome = document.getElementById(`nome-${i}`).value.trim();
   if (!nome) { alert("Digite seu nome para reservar."); return; }
 
-  fetch("SUA_URL_DO_WEB_APP", {
+  fetch("https://script.google.com/macros/s/AKfycbyB0UvaidvVr5j8NT5HjP7QkUHE7ISIXaSAHIFMmtLvHLYAUULJLTyt8IeBsCrt-RhV/exec", {
     method: "POST",
     body: JSON.stringify({ item: presentes[i].nome, nome: nome }),
     headers: { "Content-Type": "application/json" }
