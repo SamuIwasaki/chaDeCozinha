@@ -14,7 +14,6 @@
       overflow-x: hidden;
     }
 
-    /* Decorative utensils around the page */
     .decoration {
       position: fixed;
       opacity: 0.1;
@@ -59,20 +58,9 @@
       z-index: 1;
     }
 
-    header h1, header p {
-      position: relative;
-      z-index: 2;
-    }
-
-    header h1 {
-      font-size: 3rem;
-      margin-bottom: 10px;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
-    }
-
-    header p {
-      font-size: 1.2rem;
-    }
+    header h1, header p { position: relative; z-index: 2; }
+    header h1 { font-size: 3rem; margin-bottom: 10px; text-shadow: 3px 3px 6px rgba(0,0,0,0.8); }
+    header p { font-size: 1.2rem; }
 
     section {
       max-width: 1100px;
@@ -142,29 +130,10 @@
       box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     }
 
-    .item h3 {
-      margin: 15px 0;
-      color: #5a4a42;
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    .reservado {
-      opacity: 0.6;
-      text-decoration: line-through;
-      background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
-    }
-
-    .reservado .item-icon {
-      background: #999;
-    }
-
-    .reservado-info {
-      color: #28a745;
-      font-weight: bold;
-      margin: 10px 0;
-      font-size: 0.9rem;
-    }
+    .item h3 { margin: 15px 0; color: #5a4a42; font-size: 1.1rem; font-weight: 600; }
+    .reservado { opacity: 0.6; text-decoration: line-through; background: linear-gradient(135deg, #f0f0f0, #e8e8e8); }
+    .reservado .item-icon { background: #999; }
+    .reservado-info { color: #28a745; font-weight: bold; margin: 10px 0; font-size: 0.9rem; }
 
     input[type="text"] {
       padding: 10px;
@@ -223,9 +192,7 @@
       box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
     }
 
-    .event-details p {
-      margin: 0;
-    }
+    .event-details p { margin: 0; }
 
     footer {
       text-align: center;
@@ -236,7 +203,6 @@
       margin-top: 40px;
     }
 
-    /* Responsive design */
     @media (max-width: 768px) {
       header h1 { font-size: 2rem; }
       .presentes { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
@@ -246,7 +212,6 @@
 </head>
 <body>
 
-  <!-- Decorative elements -->
   <div class="decoration">🥄</div>
   <div class="decoration">🍴</div>
   <div class="decoration">🔪</div>
@@ -282,87 +247,80 @@
   </footer>
 
 <script>
-const presentes = [
-  { nome: "Escorredor de macarrão", icone: "🍝" },
-  { nome: "Escorredor de arroz", icone: "🍚" },
-  { nome: "Tábua de madeira", icone: "🪵" },
-  { nome: "Tábua de plástico", icone: "📋" },
-  { nome: "Tábua de vidro", icone: "🔷" },
-  { nome: "Escorredor de louça", icone: "🍽️" },
-  { nome: "Kit pia (lixeira, porta detergente)", icone: "🧽" },
-  { nome: "Rodinho de pia", icone: "🧹" },
-  { nome: "Ralador", icone: "🧀" },
-  { nome: "Descascador", icone: "🥔" },
-  { nome: "Batedor de ovos", icone: "🥚" },
-  { nome: "Concha", icone: "🥄" },
-  { nome: "Escumadeira", icone: "🍳" },
-  { nome: "Pegador de massas", icone: "🍝" },
-  { nome: "Espátula", icone: "🍳" },
-  { nome: "Colher de pau", icone: "🥄" },
-  { nome: "Colheres medidoras", icone: "📏" },
-  { nome: "Peneira", icone: "⚪" },
-  { nome: "Funil", icone: "🔽" },
-  { nome: "Saladeira", icone: "🥗" },
-  { nome: "Fruteira", icone: "🍎" },
-  { nome: "Jarra de suco", icone: "🥤" },
-  { nome: "Luva térmica", icone: "🧤" },
-  { nome: "Panos de prato", icone: "🧽" },
-  { nome: "Jogo americano", icone: "🍽️" },
-  { nome: "Toalha de mesa", icone: "🏠" },
-  { nome: "Centrífuga de salada", icone: "🥬" },
-  { nome: "Espremedor de alho", icone: "🧄" },
-  { nome: "Pote de vidro hermético", icone: "🫙" },
-  { nome: "Potes de condimentos", icone: "🧂" },
-  { nome: "Potes de plástico", icone: "📦" },
-  { nome: "Potes de vidro", icone: "🫙" },
-  { nome: "Potes de mantimentos", icone: "🏺" },
-  { nome: "Assadeira redonda", icone: "🍰" },
-  { nome: "Assadeira retangular", icone: "🍞" },
-  { nome: "Assadeira redonda com furo", icone: "🍩" },
-  { nome: "Baldes", icone: "🪣" },
-  { nome: "Bacias", icone: "🥣" },
-  { nome: "Vassoura", icone: "🧹" },
-  { nome: "Rodo", icone: "🧽" },
-  { nome: "Varal", icone: "👕" },
-  { nome: "Cabide", icone: "👔" },
-  { nome: "Varal com prendedores", icone: "📎" },
-  { nome: "Cesto de roupa", icone: "🧺" }
-];
+const SHEET_URL = "SUA_URL_DO_APPS_SCRIPT"; // Substitua pela URL do Apps Script
 
-// Carregar reservas do localStorage
-function carregarReservas() {
-  const reservasSalvas = localStorage.getItem('reservasChaCozinha');
-  if (reservasSalvas) {
-    return JSON.parse(reservasSalvas);
+let presentes = [];
+
+async function carregarPresentes() {
+  try {
+    const response = await fetch(SHEET_URL);
+    presentes = await response.json();
+    atualizarLista();
+  } catch (err) {
+    console.error("Erro ao carregar presentes:", err);
+    alert("Erro ao carregar a lista de presentes.");
   }
-  return Array(presentes.length).fill(null);
 }
 
-// Salvar reservas no localStorage
-function salvarReservas(reservas) {
-  localStorage.setItem('reservasChaCozinha', JSON.stringify(reservas));
+async function reservar(i) {
+  const nome = document.getElementById(`nome-${i}`).value.trim();
+  if (!nome) { alert("Digite seu nome para reservar."); return; }
+
+  try {
+    const data = { item: presentes[i].nome, nome };
+    const response = await fetch(SHEET_URL, {
+      method: "POST",
+      body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (result.status === "ok") {
+      presentes[i].reservadoPor = nome;
+      atualizarLista();
+      alert(`Presente "${presentes[i].nome}" reservado com sucesso para ${nome}!`);
+    }
+  } catch(err) {
+    console.error("Erro ao reservar:", err);
+    alert("Erro ao reservar o item.");
+  }
 }
 
-let reservas = carregarReservas();
+async function cancelarReserva(i) {
+  const confirmacao = confirm(`Deseja cancelar a reserva de "${presentes[i].nome}" feita por ${presentes[i].reservadoPor}?`);
+  if (!confirmacao) return;
+
+  try {
+    const data = { item: presentes[i].nome, nome: "" };
+    const response = await fetch(SHEET_URL, {
+      method: "POST",
+      body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (result.status === "ok") {
+      presentes[i].reservadoPor = "";
+      atualizarLista();
+    }
+  } catch(err) {
+    console.error("Erro ao cancelar reserva:", err);
+    alert("Erro ao cancelar a reserva.");
+  }
+}
 
 function atualizarLista() {
   const container = document.getElementById("lista");
   container.innerHTML = "";
-  
+
   presentes.forEach((item, i) => {
     const div = document.createElement("div");
-    div.className = "item" + (reservas[i] ? " reservado" : "");
-    
-    if (reservas[i]) {
-      // Item reservado
+    div.className = "item" + (item.reservadoPor ? " reservado" : "");
+
+    if (item.reservadoPor) {
       div.innerHTML = `
         <div class="item-icon">${item.icone}</div>
         <h3>${item.nome}</h3>
-        <div class="reservado-info">✓ Reservado por: ${reservas[i]}</div>
+        <div class="reservado-info">✓ Reservado por: ${item.reservadoPor}</div>
         <button class="cancelar-btn" onclick="cancelarReserva(${i})">Cancelar Reserva</button>
       `;
     } else {
-      // Item disponível
       div.innerHTML = `
         <div class="item-icon">${item.icone}</div>
         <h3>${item.nome}</h3>
@@ -370,69 +328,13 @@ function atualizarLista() {
         <button onclick="reservar(${i})">Reservar</button>
       `;
     }
-    
+
     container.appendChild(div);
   });
 }
 
-function reservar(i) {
-  const nome = document.getElementById(`nome-${i}`).value.trim();
-  if (!nome) {
-    alert("Digite seu nome para reservar.");
-    return;
-  }
-  
-  if (nome.length < 2) {
-    alert("Digite um nome válido (pelo menos 2 caracteres).");
-    return;
-  }
-  
-  reservas[i] = nome;
-  salvarReservas(reservas);
-  atualizarLista();
-  
-  // Mostrar mensagem de sucesso
-  alert(`Presente "${presentes[i].nome}" reservado com sucesso para ${nome}!`);
-}
-
-function cancelarReserva(i) {
-  const nomeReservado = reservas[i];
-  const confirmacao = confirm(`Tem certeza que deseja cancelar a reserva do item "${presentes[i].nome}" feita por ${nomeReservado}?`);
-  
-  if (confirmacao) {
-    reservas[i] = null;
-    salvarReservas(reservas);
-    atualizarLista();
-    alert(`Reserva do item "${presentes[i].nome}" cancelada com sucesso!`);
-  }
-}
-
-// Função para limpar todas as reservas (para teste)
-function limparTodasReservas() {
-  if (confirm("Tem certeza que deseja limpar todas as reservas? Esta ação não pode ser desfeita.")) {
-    reservas = Array(presentes.length).fill(null);
-    salvarReservas(reservas);
-    atualizarLista();
-    alert("Todas as reservas foram removidas!");
-  }
-}
-
-// Inicializar a lista
-atualizarLista();
-
-// Adicionar evento para Enter nos campos de input
-document.addEventListener('keypress', function(e) {
-  if (e.key === 'Enter' && e.target.type === 'text') {
-    const id = e.target.id;
-    const index = parseInt(id.split('-')[1]);
-    if (!isNaN(index)) {
-      reservar(index);
-    }
-  }
-});
-
-// Console log para debug (pode remover em produção)
-console.log("Sistema de reservas carregado. Use limparTodasReservas() no console para limpar todas as reservas.");
+// Inicializa
+carregarPresentes();
 </script>
 
 </body>
