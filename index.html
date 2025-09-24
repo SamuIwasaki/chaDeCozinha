@@ -317,9 +317,22 @@ function atualizarLista() {
 function reservar(i) {
   const nome = document.getElementById(`nome-${i}`).value.trim();
   if (!nome) { alert("Digite seu nome para reservar."); return; }
-  reservas[i] = nome;
-  localStorage.setItem('reservas', JSON.stringify(reservas));
-  atualizarLista();
+
+  fetch("SUA_URL_DO_WEB_APP", {
+    method: "POST",
+    body: JSON.stringify({ item: presentes[i].nome, nome: nome }),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'ok') {
+      reservas[i] = nome;
+      atualizarLista();
+    } else {
+      alert("Erro ao salvar na planilha: " + data.message);
+    }
+  })
+  .catch(err => alert("Erro ao conectar ao servidor: " + err));
 }
 
 function baixarLista() {
