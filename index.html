@@ -58,7 +58,11 @@
       z-index: 1;
     }
 
-    header h1, header p { position: relative; z-index: 2; }
+    header h1, header p {
+      position: relative;
+      z-index: 2;
+    }
+
     header h1 { font-size: 3rem; margin-bottom: 10px; text-shadow: 3px 3px 6px rgba(0,0,0,0.8); }
     header p { font-size: 1.2rem; }
 
@@ -131,9 +135,14 @@
     }
 
     .item h3 { margin: 15px 0; color: #5a4a42; font-size: 1.1rem; font-weight: 600; }
-    .reservado { opacity: 0.6; text-decoration: line-through; background: linear-gradient(135deg, #f0f0f0, #e8e8e8); }
+
+    .reservado {
+      opacity: 0.6;
+      text-decoration: line-through;
+      background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
+    }
+
     .reservado .item-icon { background: #999; }
-    .reservado-info { color: #28a745; font-weight: bold; margin: 10px 0; font-size: 0.9rem; }
 
     input[type="text"] {
       padding: 10px;
@@ -162,23 +171,12 @@
       font-size: 0.9rem;
       transition: all 0.3s;
       box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-      margin: 2px;
     }
 
     button:hover { 
       background: linear-gradient(135deg, #b96655, #a55544);
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-
-    .cancelar-btn {
-      background: linear-gradient(135deg, #dc3545, #c82333);
-      font-size: 0.8rem;
-      padding: 5px 10px;
-    }
-
-    .cancelar-btn:hover {
-      background: linear-gradient(135deg, #c82333, #b21e2f);
     }
 
     .event-details {
@@ -227,6 +225,7 @@
   <section>
     <h2>Lista de Presentes</h2>
     <div id="lista" class="presentes"></div>
+    <button onclick="baixarLista()">📥 Baixar lista em CSV</button>
   </section>
 
   <section>
@@ -247,94 +246,97 @@
   </footer>
 
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbyB0UvaidvVr5j8NT5HjP7QkUHE7ISIXaSAHIFMmtLvHLYAUULJLTyt8IeBsCrt-RhV/exec"; // Substitua pela URL do Apps Script
+const presentes = [
+  { nome: "Escorredor de macarrão", icone: "🍝" },
+  { nome: "Escorredor de arroz", icone: "🍚" },
+  { nome: "Tábua de madeira", icone: "🪵" },
+  { nome: "Tábua de plástico", icone: "📋" },
+  { nome: "Tábua de vidro", icone: "🔷" },
+  { nome: "Escorredor de louça", icone: "🍽️" },
+  { nome: "Kit pia (lixeira, porta detergente)", icone: "🧽" },
+  { nome: "Rodinho de pia", icone: "🧹" },
+  { nome: "Ralador", icone: "🧀" },
+  { nome: "Descascador", icone: "🥔" },
+  { nome: "Batedor de ovos", icone: "🥚" },
+  { nome: "Concha", icone: "🥄" },
+  { nome: "Escumadeira", icone: "🍳" },
+  { nome: "Pegador de massas", icone: "🍝" },
+  { nome: "Espátula", icone: "🍳" },
+  { nome: "Colher de pau", icone: "🥄" },
+  { nome: "Colheres medidoras", icone: "📏" },
+  { nome: "Peneira", icone: "⚪" },
+  { nome: "Funil", icone: "🔽" },
+  { nome: "Saladeira", icone: "🥗" },
+  { nome: "Fruteira", icone: "🍎" },
+  { nome: "Jarra de suco", icone: "🥤" },
+  { nome: "Luva térmica", icone: "🧤" },
+  { nome: "Panos de prato", icone: "🧽" },
+  { nome: "Jogo americano", icone: "🍽️" },
+  { nome: "Toalha de mesa", icone: "🏠" },
+  { nome: "Centrífuga de salada", icone: "🥬" },
+  { nome: "Espremedor de alho", icone: "🧄" },
+  { nome: "Pote de vidro hermético", icone: "🫙" },
+  { nome: "Potes de condimentos", icone: "🧂" },
+  { nome: "Potes de plástico", icone: "📦" },
+  { nome: "Potes de vidro", icone: "🫙" },
+  { nome: "Potes de mantimentos", icone: "🏺" },
+  { nome: "Assadeira redonda", icone: "🍰" },
+  { nome: "Assadeira retangular", icone: "🍞" },
+  { nome: "Assadeira redonda com furo", icone: "🍩" },
+  { nome: "Baldes", icone: "🪣" },
+  { nome: "Bacias", icone: "🥣" },
+  { nome: "Vassoura", icone: "🧹" },
+  { nome: "Rodo", icone: "🧽" },
+  { nome: "Varal", icone: "👕" },
+  { nome: "Cabide", icone: "👔" },
+  { nome: "Varal com prendedores", icone: "📎" },
+  { nome: "Cesto de roupa", icone: "🧺" }
+];
 
-let presentes = [];
-
-async function carregarPresentes() {
-  try {
-    const response = await fetch(SHEET_URL);
-    presentes = await response.json();
-    atualizarLista();
-  } catch (err) {
-    console.error("Erro ao carregar presentes:", err);
-    alert("Erro ao carregar a lista de presentes.");
-  }
-}
-
-async function reservar(i) {
-  const nome = document.getElementById(`nome-${i}`).value.trim();
-  if (!nome) { alert("Digite seu nome para reservar."); return; }
-
-  try {
-    const data = { item: presentes[i].nome, nome };
-    const response = await fetch(SHEET_URL, {
-      method: "POST",
-      body: JSON.stringify(data)
-    });
-    const result = await response.json();
-    if (result.status === "ok") {
-      presentes[i].reservadoPor = nome;
-      atualizarLista();
-      alert(`Presente "${presentes[i].nome}" reservado com sucesso para ${nome}!`);
-    }
-  } catch(err) {
-    console.error("Erro ao reservar:", err);
-    alert("Erro ao reservar o item.");
-  }
-}
-
-async function cancelarReserva(i) {
-  const confirmacao = confirm(`Deseja cancelar a reserva de "${presentes[i].nome}" feita por ${presentes[i].reservadoPor}?`);
-  if (!confirmacao) return;
-
-  try {
-    const data = { item: presentes[i].nome, nome: "" };
-    const response = await fetch(SHEET_URL, {
-      method: "POST",
-      body: JSON.stringify(data)
-    });
-    const result = await response.json();
-    if (result.status === "ok") {
-      presentes[i].reservadoPor = "";
-      atualizarLista();
-    }
-  } catch(err) {
-    console.error("Erro ao cancelar reserva:", err);
-    alert("Erro ao cancelar a reserva.");
-  }
-}
+// Usando LocalStorage para persistir os nomes
+let reservas = JSON.parse(localStorage.getItem('reservas')) || Array(presentes.length).fill(null);
 
 function atualizarLista() {
   const container = document.getElementById("lista");
   container.innerHTML = "";
-
   presentes.forEach((item, i) => {
     const div = document.createElement("div");
-    div.className = "item" + (item.reservadoPor ? " reservado" : "");
-
-    if (item.reservadoPor) {
-      div.innerHTML = `
-        <div class="item-icon">${item.icone}</div>
-        <h3>${item.nome}</h3>
-        <div class="reservado-info">✓ Reservado por: ${item.reservadoPor}</div>
-        <button class="cancelar-btn" onclick="cancelarReserva(${i})">Cancelar Reserva</button>
-      `;
-    } else {
-      div.innerHTML = `
-        <div class="item-icon">${item.icone}</div>
-        <h3>${item.nome}</h3>
-        <input type="text" id="nome-${i}" placeholder="Digite seu nome">
-        <button onclick="reservar(${i})">Reservar</button>
-      `;
-    }
-
+    div.className = "item" + (reservas[i] ? " reservado" : "");
+    div.innerHTML = `
+      <div class="item-icon">${item.icone}</div>
+      <h3>${item.nome}</h3>
+      ${reservas[i]
+        ? `<p><strong>Reservado por:</strong> ${reservas[i]}</p>`
+        : `<input type="text" id="nome-${i}" placeholder="Digite seu nome">
+           <button onclick="reservar(${i})">Reservar</button>`}
+    `;
     container.appendChild(div);
   });
 }
 
-// Inicializa
-carregarPresentes();
+function reservar(i) {
+  const nome = document.getElementById(`nome-${i}`).value.trim();
+  if (!nome) { alert("Digite seu nome para reservar."); return; }
+  reservas[i] = nome;
+  localStorage.setItem('reservas', JSON.stringify(reservas));
+  atualizarLista();
+}
+
+function baixarLista() {
+  let csv = "Presente,Nome\n";
+  presentes.forEach((item, i) => {
+    csv += `"${item.nome}","${reservas[i] || ""}"\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "lista_presentes.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+atualizarLista();
 </script>
 
 </body>
