@@ -4,227 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chá de Cozinha da Samuel & Nicoly</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #fff7f2;
-      color: #5a4a42;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* Decorative utensils around the page */
-    .decoration {
-      position: fixed;
-      opacity: 0.1;
-      z-index: -1;
-      font-size: 2rem;
-      color: #d37d6b;
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .decoration:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
-    .decoration:nth-child(2) { top: 20%; right: 8%; animation-delay: 1s; }
-    .decoration:nth-child(3) { top: 40%; left: 3%; animation-delay: 2s; }
-    .decoration:nth-child(4) { top: 60%; right: 5%; animation-delay: 3s; }
-    .decoration:nth-child(5) { top: 80%; left: 7%; animation-delay: 4s; }
-    .decoration:nth-child(6) { bottom: 10%; right: 10%; animation-delay: 5s; }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(5deg); }
-    }
-
-    header {
-      background: linear-gradient(135deg, #f9c7c0, #ffe3c8, #f4d4c7);
-      text-align: center;
-      padding: 60px 20px;
-      background-image: url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=1500&q=80');
-      background-size: cover;
-      background-position: center;
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-      position: relative;
-    }
-
-    header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.3);
-      z-index: 1;
-    }
-
-    header h1, header p {
-      position: relative;
-      z-index: 2;
-    }
-
-    header h1 {
-      font-size: 3rem;
-      margin-bottom: 10px;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
-    }
-
-    header p {
-      font-size: 1.2rem;
-    }
-
-    section {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 30px;
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      border: 2px solid #f9c7c0;
-      position: relative;
-    }
-
-    section::before {
-      content: '🍴';
-      position: absolute;
-      top: -15px;
-      left: 30px;
-      background: white;
-      padding: 5px 10px;
-      border-radius: 50%;
-      font-size: 1.5rem;
-    }
-
-    h2 {
-      text-align: center;
-      color: #d37d6b;
-      margin-bottom: 30px;
-      font-size: 2rem;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    }
-
-    .presentes {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 25px;
-      padding: 10px;
-    }
-
-    .item {
-      background: linear-gradient(135deg, #fff6f4, #ffeee8);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
-      position: relative;
-    }
-
-    .item:hover { 
-      transform: translateY(-5px) scale(1.02); 
-      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-      border-color: #f9c7c0;
-    }
-
-    .item-icon {
-      width: 40px;
-      height: 40px;
-      margin: 0 auto 15px;
-      background: #f9c7c0;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      color: white;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-    }
-
-    .item h3 {
-      margin: 15px 0;
-      color: #5a4a42;
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    .reservado {
-      opacity: 0.6;
-      text-decoration: line-through;
-      background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
-    }
-
-    .reservado .item-icon {
-      background: #999;
-    }
-
-    input[type="text"] {
-      padding: 10px;
-      width: 85%;
-      margin-bottom: 10px;
-      border: 2px solid #f9c7c0;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      transition: border-color 0.3s;
-    }
-
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #d37d6b;
-      box-shadow: 0 0 0 3px rgba(211, 125, 107, 0.1);
-    }
-
-    button {
-      padding: 10px 20px;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #d37d6b, #b96655);
-      color: white;
-      font-weight: bold;
-      font-size: 0.9rem;
-      transition: all 0.3s;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-    }
-
-    button:hover { 
-      background: linear-gradient(135deg, #b96655, #a55544);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-
-    .event-details {
-      background: linear-gradient(135deg, #f9c7c0, #ffe3c8);
-      padding: 30px;
-      border-radius: 16px;
-      text-align: center;
-      font-size: 1.1rem;
-      line-height: 1.8;
-      color: #5a4a42;
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .event-details p {
-      margin: 0;
-    }
-
-    footer {
-      text-align: center;
-      padding: 30px;
-      color: #8d7a70;
-      font-size: 1rem;
-      background: linear-gradient(135deg, #f9c7c0, #ffe3c8);
-      margin-top: 40px;
-    }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-      header h1 { font-size: 2rem; }
-      .presentes { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-      section { margin: 20px 10px; padding: 20px; }
-    }
-  </style>
+  <link rel="icon" href="https://public-frontend-cos.metadl.com/mgx/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
@@ -243,6 +24,9 @@
 
   <section>
     <h2>Lista de Presentes</h2>
+    <div id="loading-indicator" class="loading-indicator" style="display: none;">
+      <p>Carregando lista de presentes... ⏳</p>
+    </div>
     <div id="lista" class="presentes"></div>
   </section>
 
@@ -259,92 +43,29 @@
     </div>
   </section>
 
+  <section>
+    <h2>Como Conectar ao Google Sheets</h2>
+    <div class="event-details">
+      <p>
+        <strong>Para ativar a sincronização com Google Sheets:</strong><br>
+        1. Crie uma planilha no Google Sheets<br>
+        2. Vá em Extensões → Apps Script<br>
+        3. Cole o código fornecido no arquivo script.js<br>
+        4. Publique como Web App<br>
+        5. Cole a URL do Web App no campo abaixo<br>
+      </p>
+      <div style="margin-top: 20px;">
+        <input type="text" id="sheets-url" placeholder="Cole aqui a URL do Google Apps Script Web App" style="width: 90%; margin-bottom: 10px;">
+        <button onclick="conectarGoogleSheets()" style="display: block; margin: 0 auto;">Conectar Google Sheets</button>
+        <p id="connection-status" style="margin-top: 10px; font-weight: bold;"></p>
+      </div>
+    </div>
+  </section>
+
   <footer>
     Feito com ❤️ para um dia inesquecível!
   </footer>
 
-<script>
-const presentes = [
-  { nome: "Escorredor de macarrão", icone: "🍝" },
-  { nome: "Escorredor de arroz", icone: "🍚" },
-  { nome: "Tábua de madeira", icone: "🪵" },
-  { nome: "Tábua de plástico", icone: "📋" },
-  { nome: "Tábua de vidro", icone: "🔷" },
-  { nome: "Escorredor de louça", icone: "🍽️" },
-  { nome: "Kit pia (lixeira, porta detergente)", icone: "🧽" },
-  { nome: "Rodinho de pia", icone: "🧹" },
-  { nome: "Ralador", icone: "🧀" },
-  { nome: "Descascador", icone: "🥔" },
-  { nome: "Batedor de ovos", icone: "🥚" },
-  { nome: "Concha", icone: "🥄" },
-  { nome: "Escumadeira", icone: "🍳" },
-  { nome: "Pegador de massas", icone: "🍝" },
-  { nome: "Espátula", icone: "🍳" },
-  { nome: "Colher de pau", icone: "🥄" },
-  { nome: "Colheres medidoras", icone: "📏" },
-  { nome: "Peneira", icone: "⚪" },
-  { nome: "Funil", icone: "🔽" },
-  { nome: "Saladeira", icone: "🥗" },
-  { nome: "Fruteira", icone: "🍎" },
-  { nome: "Jarra de suco", icone: "🥤" },
-  { nome: "Luva térmica", icone: "🧤" },
-  { nome: "Panos de prato", icone: "🧽" },
-  { nome: "Jogo americano", icone: "🍽️" },
-  { nome: "Toalha de mesa", icone: "🏠" },
-  { nome: "Centrífuga de salada", icone: "🥬" },
-  { nome: "Espremedor de alho", icone: "🧄" },
-  { nome: "Pote de vidro hermético", icone: "🫙" },
-  { nome: "Potes de condimentos", icone: "🧂" },
-  { nome: "Potes de plástico", icone: "📦" },
-  { nome: "Potes de vidro", icone: "🫙" },
-  { nome: "Potes de mantimentos", icone: "🏺" },
-  { nome: "Assadeira redonda", icone: "🍰" },
-  { nome: "Assadeira retangular", icone: "🍞" },
-  { nome: "Assadeira redonda com furo", icone: "🍩" },
-  { nome: "Baldes", icone: "🪣" },
-  { nome: "Bacias", icone: "🥣" },
-  { nome: "Vassoura", icone: "🧹" },
-  { nome: "Rodo", icone: "🧽" },
-  { nome: "Varal", icone: "👕" },
-  { nome: "Cabide", icone: "👔" },
-  { nome: "Varal com prendedores", icone: "📎" },
-  { nome: "Cesto de roupa", icone: "🧺" }
-];
-
-let reservas = Array(presentes.length).fill(null);
-
-function atualizarLista() {
-  const container = document.getElementById("lista");
-  container.innerHTML = "";
-  presentes.forEach((item, i) => {
-    const div = document.createElement("div");
-    div.className = "item" + (reservas[i] ? " reservado" : "");
-    div.innerHTML = `
-      <div class="item-icon">${item.icone}</div>
-      <h3>${item.nome}</h3>
-      ${reservas[i]
-        ? `<p><strong>Reservado por:</strong> ${reservas[i]}</p>`
-        : `<input type="text" id="nome-${i}" placeholder="Digite seu nome">
-           <button onclick="reservar(${i})">Reservar</button>`}
-    `;
-    container.appendChild(div);
-  });
-}
-
-function reservar(i) {
-  const nome = document.getElementById(`nome-${i}`).value.trim();
-  if (!nome) {
-    alert("Digite seu nome para reservar.");
-    return;
-  }
-  reservas[i] = nome;
-  atualizarLista();
-}
-
-atualizarLista();
-</script>
-
+  <script type="module" src="./script.js"></script>
 </body>
 </html>
-
-
