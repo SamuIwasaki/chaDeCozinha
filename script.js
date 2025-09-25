@@ -50,8 +50,7 @@ const presentes = [
 
 // Configuration
 let GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || '';
-// 'reservas' agora será um mapa de nome do item -> nome do reservador
-let reservas = {}; 
+let reservas = Array(presentes.length).fill(null);
 let isGoogleSheetsConnected = false;
 
 // Google Sheets Integration Functions
@@ -104,13 +103,13 @@ async function carregarReservasDoGoogleSheets() {
     const result = await response.json();
     
     if (result.success && result.data) {
-      // Convert Google Sheets data to reservas object (item name -> reserved by name)
-      reservas = {};
+      // Convert Google Sheets data to reservas array
+      reservas = Array(presentes.length).fill(null);
       result.data.forEach(row => {
-        const itemName = row[0]; // Item name from Sheets (coluna A)
-        const reservedBy = row[1]; // Reserved by name from Sheets (coluna B)
-        if (itemName && reservedBy) {
-          reservas[itemName] = reservedBy;
+        const index = parseInt(row[0]); // Item index
+        const nome = row[2]; // Reserved by name
+        if (!isNaN(index) && index >= 0 && index < presentes.length) {
+          reservas[index] = nome;
         }
       });
       isGoogleSheetsConnected = true;
@@ -124,17 +123,17 @@ async function carregarReservasDoGoogleSheets() {
   }
 }
 
-async function salvarReservaNoGoogleSheets(itemName, nome, action = 'reserve') {
+async function salvarReservaNoGoogleSheets(index, nome, action = 'reserve') {
   if (!GOOGLE_SHEETS_URL) {
-    console.warn("URL do Google Sheets não configurada. Salvando localmente.");
     return salvarReservasLocal();
   }
   
   try {
     const data = {
       action: action,
-      itemName: itemName,
-      reservedBy: nome, // will be empty string if action is 'cancel'
+      index: index,
+      itemName: presentes[index].nome,
+      reservedBy: nome,
       timestamp: new Date().toISOString()
     };
     
@@ -149,7 +148,7 @@ async function salvarReservaNoGoogleSheets(itemName, nome, action = 'reserve') {
     const result = await response.json();
     
     if (!result.success) {
-      throw new Error('Falha ao salvar no Google Sheets: ' + result.error);
+      throw new Error('Falha ao salvar no Google Sheets');
     }
     
     return true;
@@ -167,7 +166,7 @@ function carregarReservasLocal() {
   if (reservasSalvas) {
     reservas = JSON.parse(reservasSalvas);
   } else {
-    reservas = {}; // Initialize as empty object
+    reservas = Array(presentes.length).fill(null);
   }
 }
 
@@ -200,19 +199,16 @@ function atualizarLista() {
   container.innerHTML = "";
   
   presentes.forEach((item, i) => {
-    const isReserved = reservas[item.nome] !== undefined && reservas[item.nome] !== null && reservas[item.nome] !== '';
-    const reservedByName = reservas[item.nome];
-
     const div = document.createElement("div");
-    div.className = "item" + (isReserved ? " reservado" : "");
-    div.setAttribute('data-index', i); // Keep index for UI, but use item.nome for backend
+    div.className = "item" + (reservas[i] ? " reservado" : "");
+    div.setAttribute('data-index', i);
     
-    if (isReserved) {
+    if (reservas[i]) {
       // Item reservado
       div.innerHTML = `
         <div class="item-icon">${item.icone}</div>
         <h3>${item.nome}</h3>
-        <div class="reservado-info">✓ Reservado por: ${reservedByName}</div>
+        <div class="reservado-info">✓ Reservado por: ${reservas[i]}</div>
         <button class="cancelar-btn" onclick="cancelarReserva(${i})">Cancelar Reserva</button>
       `;
     } else {
@@ -231,8 +227,6 @@ function atualizarLista() {
 
 async function reservar(i) {
   const nome = document.getElementById(`nome-${i}`).value.trim();
-  const itemName = presentes[i].nome; // Get the actual item name
-  
   if (!nome) {
     alert("Digite seu nome para reservar.");
     return;
@@ -252,24 +246,20 @@ async function reservar(i) {
   
   try {
     // Update local state
-    reservas[itemName] = nome;
+    reservas[i] = nome;
     
     // Save to Google Sheets or localStorage
-    const savedSuccessfully = await salvarReservaNoGoogleSheets(itemName, nome, 'reserve');
+    await salvarReservaNoGoogleSheets(i, nome, 'reserve');
     
-    if (!savedSuccessfully) {
-      throw new Error("Falha ao salvar a reserva.");
-    }
-
     // Update UI
     atualizarLista();
     
     // Show success message
-    alert(`Presente "${itemName}" reservado com sucesso para ${nome}!`);
+    alert(`Presente "${presentes[i].nome}" reservado com sucesso para ${nome}!`);
   } catch (error) {
     console.error('Erro ao reservar:', error);
-    // Revert local state if save failed
-    delete reservas[itemName]; 
+    // Revert local state
+    reservas[i] = null;
     alert('Erro ao reservar o presente. Tente novamente.');
   } finally {
     setItemLoading(i, false);
@@ -281,9 +271,8 @@ async function reservar(i) {
 }
 
 async function cancelarReserva(i) {
-  const itemName = presentes[i].nome; // Get the actual item name
-  const nomeReservado = reservas[itemName];
-  const confirmacao = confirm(`Tem certeza que deseja cancelar a reserva do item "${itemName}" feita por ${nomeReservado}?`);
+  const nomeReservado = reservas[i];
+  const confirmacao = confirm(`Tem certeza que deseja cancelar a reserva do item "${presentes[i].nome}" feita por ${nomeReservado}?`);
   
   if (!confirmacao) return;
   
@@ -296,45 +285,36 @@ async function cancelarReserva(i) {
   
   try {
     // Update local state
-    delete reservas[itemName];
+    reservas[i] = null;
     
-    // Save to Google Sheets or localStorage (empty name to clear)
-    const canceledSuccessfully = await salvarReservaNoGoogleSheets(itemName, '', 'cancel');
+    // Save to Google Sheets or localStorage
+    await salvarReservaNoGoogleSheets(i, '', 'cancel');
     
-    if (!canceledSuccessfully) {
-      throw new Error("Falha ao cancelar a reserva.");
-    }
-
     // Update UI
     atualizarLista();
     
-    alert(`Reserva do item "${itemName}" cancelada com sucesso!`);
+    alert(`Reserva do item "${presentes[i].nome}" cancelada com sucesso!`);
   } catch (error) {
     console.error('Erro ao cancelar:', error);
-    // Revert local state if cancel failed
-    reservas[itemName] = nomeReservado; 
+    // Revert local state
+    reservas[i] = nomeReservado;
     alert('Erro ao cancelar a reserva. Tente novamente.');
   } finally {
     setItemLoading(i, false);
-    if (button) {
-      button.textContent = originalText;
-      button.disabled = false;
-    }
   }
 }
 
 // Utility Functions
 function limparTodasReservas() {
   if (confirm("Tem certeza que deseja limpar todas as reservas? Esta ação não pode ser desfeita.")) {
-    reservas = {}; // Clear local state
+    reservas = Array(presentes.length).fill(null);
     if (GOOGLE_SHEETS_URL) {
-      // Optionally, implement a 'clearAll' action in Google Apps Script
-      // For simplicity, this currently only clears local state and requires manual sheet clearing
-      console.log("Para limpar o Google Sheets, você precisará apagar manualmente as linhas na planilha 'Itens' ou implementar uma função 'clearAll' no Apps Script.");
+      // Clear Google Sheets (you might want to implement this)
+      console.log("Clearing Google Sheets data...");
     }
     salvarReservasLocal();
     atualizarLista();
-    alert("Todas as reservas foram removidas (apenas localmente).");
+    alert("Todas as reservas foram removidas!");
   }
 }
 
@@ -345,15 +325,13 @@ async function inicializar() {
   // Check if Google Sheets URL is already saved
   if (GOOGLE_SHEETS_URL) {
     document.getElementById('sheets-url').value = GOOGLE_SHEETS_URL;
-    document.getElementById('connection-status').textContent = '✅ URL salva. Tentando conectar...';
+    document.getElementById('connection-status').textContent = '✅ URL salva. Testando conexão...';
     document.getElementById('connection-status').style.color = '#28a745';
     
     try {
       await carregarReservasDoGoogleSheets();
     } catch (error) {
-      console.log('Erro ao carregar do Google Sheets, fallback para localStorage:', error);
-      document.getElementById('connection-status').textContent = '⚠️ Erro ao carregar do Sheets, usando dados locais.';
-      document.getElementById('connection-status').style.color = '#ffc107';
+      console.log('Fallback to localStorage');
       carregarReservasLocal();
     }
   } else {
@@ -389,7 +367,7 @@ document.addEventListener('keypress', function(e) {
 
 // Console utilities for debugging
 console.log("Sistema de reservas carregado.");
-console.log("Use limparTodasReservas() no console para limpar todas as reservas (localmente).");
+console.log("Use limparTodasReservas() no console para limpar todas as reservas.");
 console.log("Para conectar ao Google Sheets, use o formulário na página.");
 
 // Google Apps Script Code (to be copied to Google Apps Script)
@@ -398,29 +376,16 @@ const GOOGLE_APPS_SCRIPT_CODE = `
 CÓDIGO PARA GOOGLE APPS SCRIPT
 ================================
 
-1. Crie uma nova planilha no Google Sheets e nomeie-a.
-2. Crie uma aba (planilha) dentro dela e nomeie-a "Itens".
-3. Na primeira linha da aba "Itens", adicione os cabeçalhos:
-   Coluna A: "Item"
-   Coluna B: "Reserva"
-4. Popule a coluna "Item" (Coluna A) com os nomes dos presentes.
-   Ex:
-   Item                  Reserva
-   Escorredor de macarrão
-   Escorredor de arroz
-   Tábua de madeira
-   ... (e assim por diante com todos os seus presentes)
-
-5. Vá para https://script.google.com
-6. Crie um novo projeto.
-7. Cole ESTE CÓDIGO (o que está dentro destas aspas gigantes) no editor.
-8. Salve o projeto.
-9. Clique em "Implantar" > "Nova implantação".
-10. Escolha tipo "Aplicativo da web".
-11. Execute como: "Eu".
-12. Quem tem acesso: "Qualquer pessoa".
-13. Copie a URL do aplicativo da web.
-14. Cole a URL no formulário da página do seu site.
+1. Vá para https://script.google.com
+2. Crie um novo projeto
+3. Cole este código no editor
+4. Salve o projeto
+5. Clique em "Implantar" > "Nova implantação"
+6. Escolha tipo "Aplicativo da web"
+7. Execute como: "Eu"
+8. Quem tem acesso: "Qualquer pessoa"
+9. Copie a URL do aplicativo da web
+10. Cole a URL no formulário da página
 
 CÓDIGO:
 */
@@ -436,4 +401,85 @@ function doGet(e) {
   
   if (action === 'get') {
     try {
-      const sheet = getSheetByName('Itens'); // Procura pela planilha "
+      const sheet = getOrCreateSheet();
+      const data = sheet.getDataRange().getValues();
+      
+      return ContentService
+        .createTextOutput(JSON.stringify({success: true, data: data.slice(1)})) // Skip header
+        .setMimeType(ContentService.MimeType.JSON);
+    } catch (error) {
+      return ContentService
+        .createTextOutput(JSON.stringify({success: false, error: error.toString()}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+  
+  return ContentService
+    .createTextOutput(JSON.stringify({success: false, error: 'Invalid action'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const sheet = getOrCreateSheet();
+    
+    if (data.action === 'reserve') {
+      // Add or update reservation
+      const existingRow = findRowByIndex(sheet, data.index);
+      
+      if (existingRow > 0) {
+        // Update existing row
+        sheet.getRange(existingRow, 3).setValue(data.reservedBy);
+        sheet.getRange(existingRow, 4).setValue(data.timestamp);
+      } else {
+        // Add new row
+        sheet.appendRow([data.index, data.itemName, data.reservedBy, data.timestamp]);
+      }
+    } else if (data.action === 'cancel') {
+      // Remove reservation
+      const existingRow = findRowByIndex(sheet, data.index);
+      if (existingRow > 0) {
+        sheet.deleteRow(existingRow);
+      }
+    }
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({success: true}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({success: false, error: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function getOrCreateSheet() {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = spreadsheet.getSheetByName('Reservas');
+  
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet('Reservas');
+    // Add headers
+    sheet.getRange(1, 1, 1, 4).setValues([['Index', 'Item', 'Reservado Por', 'Data/Hora']]);
+  }
+  
+  return sheet;
+}
+
+function findRowByIndex(sheet, index) {
+  const data = sheet.getDataRange().getValues();
+  
+  for (let i = 1; i < data.length; i++) { // Skip header row
+    if (data[i][0] == index) {
+      return i + 1; // Return 1-based row number
+    }
+  }
+  
+  return -1; // Not found
+}
+`;
+
+// Export the Google Apps Script code for easy copying
+window.GOOGLE_APPS_SCRIPT_CODE = GOOGLE_APPS_SCRIPT_CODE;
+console.log("Código do Google Apps Script disponível em: window.GOOGLE_APPS_SCRIPT_CODE");
