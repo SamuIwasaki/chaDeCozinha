@@ -3,71 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Chá de Cozinha da Samuel & Nicoly - Venha celebrar este momento especial com muito carinho!">
-  <meta name="author" content="Samuel & Nicoly">
   <title>Chá de Cozinha da Samuel & Nicoly</title>
   <link rel="icon" href="https://public-frontend-cos.metadl.com/mgx/img/favicon.png" type="image/png">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+
   <!-- Decorative elements -->
-  <div class="decoration" aria-hidden="true">🥄</div>
-  <div class="decoration" aria-hidden="true">🍴</div>
-  <div class="decoration" aria-hidden="true">🔪</div>
-  <div class="decoration" aria-hidden="true">🥢</div>
-  <div class="decoration" aria-hidden="true">🍽️</div>
-  <div class="decoration" aria-hidden="true">🥄</div>
+  <div class="decoration">🥄</div>
+  <div class="decoration">🍴</div>
+  <div class="decoration">🔪</div>
+  <div class="decoration">🥢</div>
+  <div class="decoration">🍽️</div>
+  <div class="decoration">🥄</div>
 
   <header>
     <h1>Chá de Cozinha da Samuel & Nicoly</h1>
     <p>Venha celebrar este momento especial com muito carinho!</p>
   </header>
 
-  <main>
-    <section aria-labelledby="presentes-heading">
-      <h2 id="presentes-heading">Lista de Presentes</h2>
-      <div id="loading-indicator" class="loading-indicator" aria-live="polite" style="display: none;">
-        <p>Carregando lista de presentes... ⏳</p>
-      </div>
-      <div id="lista" class="presentes" role="list"></div>
-    </section>
+  <section>
+    <h2>Lista de Presentes</h2>
+    <div id="loading-indicator" class="loading-indicator" style="display: none;">
+      <p>Carregando lista de presentes... ⏳</p>
+    </div>
+    <div id="lista" class="presentes"></div>
+  </section>
 
-    <section aria-labelledby="detalhes-heading">
-      <h2 id="detalhes-heading">Detalhes da Festa</h2>
-      <div class="event-details">
-        <p>
-          📅 <strong>Data:</strong> 25 de outubro de 2025 <br>
-          🕒 <strong>Horário:</strong> 16h30 <br>
-          📍 <strong>Local:</strong> Condomínio Girassóis <br>
-          Rua Gisele Martins, 317 <br>
-          Jd. Morumbi
-        </p>
-      </div>
-    </section>
+  <section>
+    <h2>Detalhes da Festa</h2>
+    <div class="event-details">
+      <p>
+        📅 <strong>Data:</strong> 25 de outubro de 2025 <br>
+        🕒 <strong>Horário:</strong> 16h 30 min <br>
+        📍 <strong>Local:</strong> Condomínio Girassóis <br>
+        Rua Gisele Martins, 317 <br>
+        Jd. Morumbi
+      </p>
+    </div>
+  </section>
 
-    <section aria-labelledby="google-sheets-heading">
-      <h2 id="google-sheets-heading">Como Conectar ao Google Sheets</h2>
-      <div class="event-details">
-        <p>
-          <strong>Para ativar a sincronização com Google Sheets:</strong><br>
-          1. Crie uma planilha no Google Sheets<br>
-          2. Vá em Extensões → Apps Script<br>
-          3. Cole o código fornecido no arquivo script.js<br>
-          4. Publique como Web App<br>
-          5. Cole a URL do Web App no campo abaixo<br>
-        </p>
-        <form id="sheets-form" style="margin-top: 20px;">
-          <label for="sheets-url" class="visually-hidden">URL do Google Apps Script Web App</label>
-          <input type="url" id="sheets-url" placeholder="Cole aqui a URL do Google Apps Script Web App" required>
-          <button type="submit" onclick="conectarGoogleSheets()">Conectar Google Sheets</button>
-          <p id="connection-status" aria-live="assertive"></p>
-        </form>
+  <section>
+    <h2>Como Conectar ao Google Sheets</h2>
+    <div class="event-details">
+      <p>
+        <strong>Para ativar a sincronização com Google Sheets:</strong><br>
+        1. Crie uma planilha no Google Sheets<br>
+        2. Vá em Extensões → Apps Script<br>
+        3. Cole o código fornecido no arquivo script.js<br>
+        4. Publique como Web App<br>
+        5. Cole a URL do Web App no campo abaixo<br>
+      </p>
+      <div style="margin-top: 20px;">
+        <input type="text" id="sheets-url" placeholder="Cole aqui a URL do Google Apps Script Web App" style="width: 90%; margin-bottom: 10px;">
+        <button onclick="conectarGoogleSheets()" style="display: block; margin: 0 auto;">Conectar Google Sheets</button>
+        <p id="connection-status" style="margin-top: 10px; font-weight: bold;"></p>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
   <footer>
-    <p>Feito com ❤️ para um dia inesquecível!</p>
+    Feito com ❤️ para um dia inesquecível!
   </footer>
 
   <script type="module" src="./script.js"></script>
